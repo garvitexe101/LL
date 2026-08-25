@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Sign In · CampusFound</title>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/css/shared.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/css/profile.css"
+  >
+
+  <style>
+    .signin-page {
+      min-height:calc(100vh - 130px);
+      background:#f5f6f1;
+      padding:65px 24px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start
+    }
+
+    .signin-card {
+      width:100%;
+      max-width:500px;
+      background:#fff;
+      border:1px solid #e4e9e2;
+      border-radius:11px;
+      padding:45px;
+      box-shadow:0 14px 35px #14203c10
+    }
+
+    .signin-card .eyebrow {
+      justify-content:center
+    }
+
+    .signin-card h1 {
+      margin:12px 0 8px;
+      text-align:center;
+      font:700 38px "Playfair Display";
+      color:#15223a
+    }
+
+    .signin-subtitle {
+      text-align:center;
+      color:#6d7780;
+      font-size:14px;
+      line-height:1.6;
+      margin-bottom:30px
+    }
+
+    .signin-avatar {
+      display:grid;
+      place-items:center;
+      width:67px;
+      height:67px;
+      border-radius:50%;
+      background:#f5896a;
+      color:white;
+      margin:12px auto;
+      font-size:25px
+    }
+
+    .signin-field {
+      margin-bottom:18px
+    }
+
+    .signin-field label {
+      display:block;
+      margin-bottom:7px;
+      font-size:12px;
+      font-weight:700;
+      color:#26344c
+    }
+
+    .signin-field input {
+      width:100%;
+      box-sizing:border-box;
+      padding:13px 14px;
+      border:1px solid #dfe4de;
+      border-radius:7px;
+      background:#fafbf8;
+      color:#18263e;
+      font:500 13px "DM Sans";
+      outline:none;
+      transition:.2s
+    }
+
+    .signin-field input:focus {
+      background:#fff;
+      border-color:#f18565;
+      box-shadow:0 0 0 3px #f1856518
+    }
+
+    .signin-field small {
+      display:block;
+      min-height:16px;
+      margin-top:5px;
+      font-size:11px;
+      color:#c65342
+    }
+
+    .password-wrap {
+      position:relative
+    }
+
+    .password-wrap input {
+      padding-right:65px
+    }
+
+    .password-wrap button {
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      border:0;
+      background:none;
+      color:#c65f43;
+      font-weight:700;
+      cursor:pointer
+    }
+
+    .signin-submit {
+      width:100%;
+      justify-content:center;
+      margin-top:5px
+    }
+
+    .input-error {
+      border-color:#d96352!important;
+      background:#fff8f6!important
+    }
+
+    .input-success {
+      border-color:#79a384!important
+    }
+
+    .signin-back {
+      display:block;
+      text-align:center;
+      margin-top:18px;
+      color:#68737c;
+      font-size:13px;
+      text-decoration:none
+    }
+
+    .signin-back:hover {
+      color:#f18565
+    }
+
+    @media(max-width:600px) {
+      .signin-card {
+        padding:32px 22px
+      }
+
+      .signin-card h1 {
+        font-size:32px
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+
+    <a class="brand" href="index.html">
+      <span class="brand-mark">C</span>
+
+      <span>
+        campus<span>found</span>
+      </span>
+    </a>
+
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="index.html#browse">Browse</a>
+      <a href="map.html">Campus map</a>
+      <a href="how-it-works.html">How it works</a>
+    </nav>
+
+    <a
+      class="profile-btn profile-nav"
+      href="profile.html"
+    >
+      <span class="profile-dot">◉</span>
+      <span>Profile</span>
+    </a>
+
+  </header>
+
+  <main class="signin-page">
+
+    <section class="signin-card">
+
+      <p class="eyebrow">
+        <span></span>
+        CAMPUSFOUND ACCOUNT
+      </p>
+
+      <div class="signin-avatar">
+        ◉
+      </div>
+
+      <h1>Welcome back.</h1>
+
+      <p class="signin-subtitle">
+        Sign in using your university details to continue.
+      </p>
+
+      <form
+        id="studentLoginForm"
+        novalidate
+      >
+
+        <div class="signin-field">
+
+          <label for="studentName">
+            Full name
+          </label>
+
+          <input
+            type="text"
+            id="studentName"
+            placeholder="Enter your full name"
+            autocomplete="name"
+          >
+
+          <small id="nameError"></small>
+
+        </div>
+
+        <div class="signin-field">
+
+          <label for="studentEmail">
+            University email
+          </label>
+
+          <input
+            type="email"
+            id="studentEmail"
+            placeholder="name@chitkara.edu.in"
+            autocomplete="email"
+          >
+
+          <small id="emailError"></small>
+
+        </div>
+
+        <div class="signin-field">
+
+          <label for="studentPassword">
+            Password
+          </label>
+
+          <div class="password-wrap">
+
+            <input
+              type="password"
+              id="studentPassword"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            >
+
+            <button
+              type="button"
+              id="togglePassword"
+            >
+              Show
+            </button>
+
+          </div>
+
+          <small id="passwordError"></small>
+
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-dark signin-submit"
+        >
+          Sign in <b>→</b>
+        </button>
+
+      </form>
+
+      <a
+        class="signin-back"
+        href="profile.html"
+      >
+        ← Back to profile
+      </a>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <span>
+      © 2026 CampusFound · Chitkara University
+    </span>
+
+    <span>
+      Campus lost & found
+    </span>
+  </footer>
+
+  <div id="toast"></div>
+
+  <script src="/js/shared.js"></script>
+  <script src="/js/signin.js"></script>
+
+</body>
+</html>
