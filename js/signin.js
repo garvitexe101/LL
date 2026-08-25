@@ -10,7 +10,7 @@ const passwordError = document.getElementById('passwordError');
 
 const togglePassword = document.getElementById('togglePassword');
 
-function error(input, target, message) {
+function showError(input, target, message) {
   input.classList.add('input-error');
   input.classList.remove('input-success');
 
@@ -19,7 +19,7 @@ function error(input, target, message) {
   return false;
 }
 
-function success(input, target) {
+function showSuccess(input, target) {
   input.classList.remove('input-error');
   input.classList.add('input-success');
 
@@ -32,7 +32,7 @@ function validateName() {
   const name = nameInput.value.trim();
 
   if (!name) {
-    return error(
+    return showError(
       nameInput,
       nameError,
       'Please enter your full name.'
@@ -40,7 +40,7 @@ function validateName() {
   }
 
   if (name.length < 3) {
-    return error(
+    return showError(
       nameInput,
       nameError,
       'Name must contain at least 3 characters.'
@@ -48,51 +48,56 @@ function validateName() {
   }
 
   if (!/^[a-zA-Z ]+$/.test(name)) {
-    return error(
+    return showError(
       nameInput,
       nameError,
       'Name can contain letters and spaces only.'
     );
   }
 
-  return success(
+  return showSuccess(
     nameInput,
     nameError
   );
 }
 
 function validateEmail() {
-  const email =
-    emailInput.value.trim().toLowerCase();
+  const email = emailInput.value
+    .trim()
+    .toLowerCase();
 
   if (!email) {
-    return error(
+    return showError(
       emailInput,
       emailError,
       'Please enter your university email.'
     );
   }
 
-  const pattern =
+  const emailPattern =
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!pattern.test(email)) {
-    return error(
+  if (!emailPattern.test(email)) {
+    return showError(
       emailInput,
       emailError,
       'Enter a valid email address.'
     );
   }
 
-  if (!email.endsWith('@chitkara.edu.in')) {
-    return error(
+  const validUniversityEmail =
+    email.endsWith('@chitkara.edu') ||
+    email.endsWith('@chitkara.edu.in');
+
+  if (!validUniversityEmail) {
+    return showError(
       emailInput,
       emailError,
       'Use your Chitkara University email.'
     );
   }
 
-  return success(
+  return showSuccess(
     emailInput,
     emailError
   );
@@ -103,7 +108,7 @@ function validatePassword() {
     passwordInput.value;
 
   if (!password) {
-    return error(
+    return showError(
       passwordInput,
       passwordError,
       'Please enter your password.'
@@ -111,29 +116,34 @@ function validatePassword() {
   }
 
   if (password.length < 6) {
-    return error(
+    return showError(
       passwordInput,
       passwordError,
       'Password must contain at least 6 characters.'
     );
   }
 
-  return success(
+  return showSuccess(
     passwordInput,
     passwordError
   );
 }
 
-togglePassword.onclick = () => {
-  const hidden =
-    passwordInput.type === 'password';
+if (togglePassword) {
+  togglePassword.addEventListener(
+    'click',
+    () => {
+      const hidden =
+        passwordInput.type === 'password';
 
-  passwordInput.type =
-    hidden ? 'text' : 'password';
+      passwordInput.type =
+        hidden ? 'text' : 'password';
 
-  togglePassword.textContent =
-    hidden ? 'Hide' : 'Show';
-};
+      togglePassword.textContent =
+        hidden ? 'Hide' : 'Show';
+    }
+  );
+}
 
 nameInput.addEventListener(
   'blur',
@@ -214,7 +224,7 @@ form.addEventListener(
     };
 
     localStorage.setItem(
-      'LostLink-user',
+      'campusfound-user',
       JSON.stringify(currentUser)
     );
 
