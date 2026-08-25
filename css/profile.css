@@ -446,3 +446,119 @@ footer a {
     margin-top:28px
   }
 }
+.claim-approved-notice,
+.claim-rejected-notice {
+  display:flex;
+  gap:17px;
+  padding:21px;
+  margin:17px 0;
+  border-radius:9px
+}
+
+.claim-approved-notice {
+  background:#f1f7ee;
+  border:1px solid #cadfc8
+}
+
+.claim-rejected-notice {
+  background:#fff4f1;
+  border:1px solid #edc5bb
+}
+
+.notice-icon {
+  width:43px;
+  height:43px;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#467354;
+  color:#fff;
+  font-size:19px;
+  font-weight:700
+}
+
+.rejected-icon {
+  background:#b85b47
+}
+
+.notice-content {
+  flex:1
+}
+
+.notice-label {
+  display:block;
+  margin-bottom:4px;
+  color:#76827a;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:1.4px
+}
+
+.notice-content h3 {
+  margin:0 0 8px;
+  font:700 20px "Playfair Display";
+  color:#193326
+}
+
+.claim-rejected-notice .notice-content h3 {
+  color:#6d3026
+}
+
+.notice-content p {
+  margin:0;
+  color:#56645c;
+  font-size:13px;
+  line-height:1.65
+}
+
+.collection-location {
+  margin-top:15px;
+  padding:12px 14px;
+  background:#ffffffb8;
+  border:1px solid #dce7d9;
+  border-radius:6px
+}
+
+.collection-location span,
+.collection-location b {
+  display:block
+}
+
+.collection-location span {
+  margin-bottom:4px;
+  color:#819083;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:1px
+}
+
+.collection-location b {
+  color:#263c2d;
+  font-size:13px
+}
+
+.collection-note {
+  margin-top:11px;
+  padding:12px 14px;
+  background:#fff;
+  border-left:3px solid #f18565;
+  border-radius:4px
+}
+
+.collection-note b,
+.collection-note span {
+  display:block
+}
+
+.collection-note b {
+  margin-bottom:4px;
+  color:#1d2b49;
+  font-size:11px
+}
+
+.collection-note span {
+  color:#68746e;
+  font-size:12px;
+  line-height:1.55
+}
