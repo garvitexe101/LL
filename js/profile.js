@@ -103,9 +103,7 @@ function renderProfile() {
         <span></span> NOTIFICATION CENTRE
       </p>
 
-      <h2>
-        Recent updates
-      </h2>
+      <h2>Recent updates</h2>
 
       ${
         alerts.length
