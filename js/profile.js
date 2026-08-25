@@ -57,12 +57,6 @@ function renderProfile() {
     i => i.ownerEmail === u.email
   );
 
-  const alerts = mine
-    .filter(i => i.status !== 'Open')
-    .map(
-      i => `${i.name}: ${i.status}`
-    );
-
   $('#profilePage').innerHTML = `
     <section class="profile-card profile-top">
 
@@ -137,26 +131,12 @@ function renderProfile() {
 
       <div id="profileNoticeList"></div>
 
-      ${
-        alerts.length
-          ? alerts
-              .map(
-                a => `
-                  <p class="alert-row">
-                    ✦ ${a}
-                  </p>
-                `
-              )
-              .join('')
-          : `
-            <p
-              class="alert-row"
-              id="emptyNotificationMessage"
-            >
-              ✓ You’re all caught up. New matches and claim updates will appear here.
-            </p>
-          `
-      }
+      <p
+        class="alert-row"
+        id="emptyNotificationMessage"
+      >
+        ✓ You’re all caught up. New matches and claim updates will appear here.
+      </p>
 
     </section>
 
@@ -194,8 +174,7 @@ function renderProfile() {
 
   bindCards();
 
-  const signOut =
-    $('#signOut');
+  const signOut = $('#signOut');
 
   if (signOut) {
     signOut.onclick = () => {
@@ -206,8 +185,7 @@ function renderProfile() {
       renderProfile();
 
       if (
-        typeof updateProfile ===
-        'function'
+        typeof updateProfile === 'function'
       ) {
         updateProfile();
       }
@@ -241,20 +219,16 @@ function profileNotices() {
 
   const currentUser = user();
 
-  const mine =
-    getProfileNotices()
-      .filter(
-        n =>
-          n.email ===
-          currentUser.email
-      )
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt) -
-          new Date(a.createdAt)
-      );
-
-  if (!mine.length) return;
+  const mine = getProfileNotices()
+    .filter(
+      n =>
+        n.email === currentUser.email
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt) -
+        new Date(a.createdAt)
+    );
 
   const target =
     $('#profileNoticeList');
@@ -264,13 +238,25 @@ function profileNotices() {
   const emptyMessage =
     $('#emptyNotificationMessage');
 
+  if (!mine.length) {
+    if (emptyMessage) {
+      emptyMessage.style.display =
+        'block';
+    }
+
+    return;
+  }
+
   if (emptyMessage) {
     emptyMessage.remove();
   }
 
   target.innerHTML = mine
     .map(n => {
-      if (n.type === 'claim-approved') {
+
+      if (
+        n.type === 'claim-approved'
+      ) {
         return `
           <div class="claim-approved-notice">
 
@@ -313,7 +299,7 @@ function profileNotices() {
                 <span>
                   ${
                     n.note ||
-                    'Please carry your valid Student ID while collecting the item.'
+                    'Please carry your valid Student ID while visiting the Security Office to collect the item.'
                   }
                 </span>
 
@@ -325,7 +311,9 @@ function profileNotices() {
         `;
       }
 
-      if (n.type === 'claim-rejected') {
+      if (
+        n.type === 'claim-rejected'
+      ) {
         return `
           <div class="claim-rejected-notice">
 
@@ -354,7 +342,10 @@ function profileNotices() {
                 </b>
 
                 <span>
-                  ${n.note || ''}
+                  ${
+                    n.note ||
+                    'If you believe this decision was incorrect, please contact the campus lost-and-found team.'
+                  }
                 </span>
 
               </div>
@@ -366,9 +357,29 @@ function profileNotices() {
       }
 
       return `
-        <p class="alert-row">
-          ✦ ${n.message || ''}
-        </p>
+        <div class="claim-approved-notice">
+
+          <div class="notice-icon">
+            ✓
+          </div>
+
+          <div class="notice-content">
+
+            <span class="notice-label">
+              CLAIM UPDATE
+            </span>
+
+            <h3>
+              ${n.title || 'Claim update'}
+            </h3>
+
+            <p>
+              ${n.message || ''}
+            </p>
+
+          </div>
+
+        </div>
       `;
     })
     .join('');
