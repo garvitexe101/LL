@@ -5,38 +5,31 @@ function renderAdmin() {
 
   if (!u || u.role !== 'admin') return;
 
-  const pending =
-    items.filter(i => i.claim === 'pending');
+  const pending = items.filter(
+    i => i.claim === 'pending'
+  );
 
   $('#adminApp').innerHTML = `
     <div class="admin-dashboard">
 
       <div class="admin-head">
-
         <div>
-
           <p class="eyebrow">
-            <span></span>
-            CAMPUSFOUND ADMIN
+            <span></span> CAMPUSFOUND ADMIN
           </p>
 
-          <h1>
-            Good morning, Admin.
-          </h1>
+          <h1>Good morning, Admin.</h1>
 
           <p>
             Moderate reports and decide verified ownership claims.
           </p>
-
         </div>
-
       </div>
 
       <div class="admin-stats">
 
         <div class="stat">
           <span>Visible reports</span>
-
           <b>
             ${
               items.filter(
@@ -48,7 +41,6 @@ function renderAdmin() {
 
         <div class="stat">
           <span>Returned items</span>
-
           <b>
             ${
               items.filter(
@@ -60,7 +52,6 @@ function renderAdmin() {
 
         <div class="stat">
           <span>Possible matches</span>
-
           <b>
             ${
               items.filter(
@@ -72,19 +63,14 @@ function renderAdmin() {
 
         <div class="stat">
           <span>Claims to review</span>
-
-          <b>
-            ${pending.length}
-          </b>
+          <b>${pending.length}</b>
         </div>
 
       </div>
 
       <section class="moderation">
 
-        <h2>
-          Claim review
-        </h2>
+        <h2>Claim review</h2>
 
         ${
           pending.length
@@ -106,7 +92,11 @@ function renderAdmin() {
                           </h3>
 
                           <small>
-                            ${i.type ? i.type.toUpperCase() : 'ITEM'}
+                            ${
+                              i.type
+                                ? i.type.toUpperCase()
+                                : 'ITEM'
+                            }
                             ·
                             ${i.status || 'Open'}
                           </small>
@@ -118,9 +108,7 @@ function renderAdmin() {
 
                         <div class="admin-claim-section">
 
-                          <h4>
-                            Claimant details
-                          </h4>
+                          <h4>Claimant details</h4>
 
                           <p>
                             <span>Name</span>
@@ -153,9 +141,7 @@ function renderAdmin() {
 
                         <div class="admin-claim-section">
 
-                          <h4>
-                            Claimant answers
-                          </h4>
+                          <h4>Claimant answers</h4>
 
                           <p>
                             <span>Colour</span>
@@ -201,9 +187,7 @@ function renderAdmin() {
 
                         <div class="admin-claim-section finder-private">
 
-                          <h4>
-                            Finder's original details
-                          </h4>
+                          <h4>Finder's original details</h4>
 
                           <p>
                             <span>Finder</span>
@@ -241,6 +225,7 @@ function renderAdmin() {
                                 i.privateDetail ||
                                 i.privateFeature ||
                                 i.secretDetail ||
+                                i.ownershipDetail ||
                                 'Not provided'
                               }
                             </b>
@@ -295,9 +280,7 @@ function renderAdmin() {
 
       <section class="moderation">
 
-        <h2>
-          Report visibility
-        </h2>
+        <h2>Report visibility</h2>
 
         ${
           items
@@ -361,13 +344,14 @@ function bindAdminActions() {
 
       addClaimNotice(
         item.claimantEmail,
-        `Your claim for ${item.name} was approved.`
+        item.name,
+        'approved'
       );
 
       save();
 
       toast(
-        'Claim approved and item marked as returned.'
+        'Claim approved. Collection instructions sent to the claimant.'
       );
 
       renderAdmin();
@@ -387,7 +371,8 @@ function bindAdminActions() {
 
       addClaimNotice(
         item.claimantEmail,
-        `Your claim for ${item.name} was rejected.`
+        item.name,
+        'rejected'
       );
 
       save();
@@ -446,23 +431,67 @@ function bindAdminActions() {
   });
 }
 
-function addClaimNotice(email, message) {
+function addClaimNotice(email, itemName, status) {
   if (!email) return;
 
-  if (
-    typeof notices !== 'function'
-  ) {
-    return;
+  let allNotices = [];
+
+  try {
+    allNotices =
+      JSON.parse(
+        localStorage.getItem(
+          'campusfound-notices'
+        )
+      ) || [];
+  } catch {
+    allNotices = [];
   }
 
-  const allNotices = notices();
+  if (status === 'approved') {
+    allNotices.push({
+      id: Date.now(),
 
-  allNotices.push({
-    id: Date.now(),
-    email: email,
-    message: message,
-    createdAt: new Date().toISOString()
-  });
+      email: email,
+
+      type: 'claim-approved',
+
+      title: 'Claim approved',
+
+      itemName: itemName,
+
+      message:
+        `Your claim for ${itemName} has been approved. You can successfully collect the item from the Security Office behind Turing Block.`,
+
+      note:
+        'Please carry your valid Student ID while visiting the Security Office to collect the item.',
+
+      createdAt:
+        new Date().toISOString()
+    });
+  }
+
+  if (status === 'rejected') {
+    allNotices.push({
+      id: Date.now(),
+
+      email: email,
+
+      type: 'claim-rejected',
+
+      title: 'Claim rejected',
+
+      itemName: itemName,
+
+      message:
+        `Your claim for ${itemName} was not approved by the campus administrator.`,
+
+      note:
+        'If you believe this decision was incorrect, please contact the campus lost-and-found team.',
+
+      createdAt:
+        new Date().toISOString()
+    });
+  }
 
   localStorage.setItem(
     'campusfound-notices',
