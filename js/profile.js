@@ -9,7 +9,7 @@ function renderProfile() {
 
         <p class="eyebrow">
           <span></span>
-          YOUR LOSTLINK PROFILE
+          YOUR CAMPUSFOUND PROFILE
         </p>
 
         <span class="large-avatar">
@@ -18,7 +18,7 @@ function renderProfile() {
 
         <h1>
           Welcome to<br>
-          LostLink.
+          CampusFound.
         </h1>
 
         <p>
@@ -28,6 +28,7 @@ function renderProfile() {
         <div class="profile-actions">
 
           <button
+            type="button"
             class="btn btn-dark"
             id="quickSignIn"
           >
@@ -46,9 +47,13 @@ function renderProfile() {
       </section>
     `;
 
-    $('#quickSignIn').onclick = () => {
-      location.href = 'signin.html';
-    };
+    const quickSignIn = $('#quickSignIn');
+
+    if (quickSignIn) {
+      quickSignIn.onclick = () => {
+        location.href = 'signin.html';
+      };
+    }
 
     return;
   }
@@ -78,7 +83,7 @@ function renderProfile() {
       </span>
 
       <h1>
-        ${u.name || 'LostLink User'}
+        ${u.name || 'CampusFound User'}
       </h1>
 
       <p>
@@ -108,6 +113,7 @@ function renderProfile() {
         }
 
         <button
+          type="button"
           class="btn btn-light"
           id="signOut"
         >
@@ -172,23 +178,26 @@ function renderProfile() {
     </section>
   `;
 
-  bindCards();
+  if (typeof bindCards === 'function') {
+    bindCards();
+  }
 
   const signOut = $('#signOut');
 
   if (signOut) {
     signOut.onclick = () => {
       localStorage.removeItem(
-        'LostLink-user'
+        'campusfound-user'
       );
 
-      renderProfile();
-
       if (
-        typeof updateProfile === 'function'
+        typeof updateProfile ===
+        'function'
       ) {
         updateProfile();
       }
+
+      location.href = 'profile.html';
     };
   }
 
@@ -200,7 +209,7 @@ function getProfileNotices() {
     return (
       JSON.parse(
         localStorage.getItem(
-          'LostLink-notices'
+          'campusfound-notices'
         )
       ) || []
     );
@@ -211,7 +220,8 @@ function getProfileNotices() {
 
 function profileNotices() {
   if (
-    document.body.dataset.page !== 'profile' ||
+    document.body.dataset.page !==
+      'profile' ||
     !user()
   ) {
     return;
@@ -222,7 +232,8 @@ function profileNotices() {
   const mine = getProfileNotices()
     .filter(
       n =>
-        n.email === currentUser.email
+        n.email ===
+        currentUser.email
     )
     .sort(
       (a, b) =>
@@ -253,9 +264,9 @@ function profileNotices() {
 
   target.innerHTML = mine
     .map(n => {
-
       if (
-        n.type === 'claim-approved'
+        n.type ===
+        'claim-approved'
       ) {
         return `
           <div class="claim-approved-notice">
@@ -271,11 +282,14 @@ function profileNotices() {
               </span>
 
               <h3>
-                ${n.title || 'Claim approved'}
+                ${
+                  n.title ||
+                  'Claim approved'
+                }
               </h3>
 
               <p>
-                ${n.message}
+                ${n.message || ''}
               </p>
 
               <div class="collection-location">
@@ -312,7 +326,8 @@ function profileNotices() {
       }
 
       if (
-        n.type === 'claim-rejected'
+        n.type ===
+        'claim-rejected'
       ) {
         return `
           <div class="claim-rejected-notice">
@@ -328,11 +343,14 @@ function profileNotices() {
               </span>
 
               <h3>
-                ${n.title || 'Claim rejected'}
+                ${
+                  n.title ||
+                  'Claim rejected'
+                }
               </h3>
 
               <p>
-                ${n.message}
+                ${n.message || ''}
               </p>
 
               <div class="collection-note">
@@ -370,7 +388,10 @@ function profileNotices() {
             </span>
 
             <h3>
-              ${n.title || 'Claim update'}
+              ${
+                n.title ||
+                'Claim update'
+              }
             </h3>
 
             <p>
