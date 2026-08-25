@@ -6,11 +6,15 @@ function renderProfile() {
   if (!u) {
     $('#profilePage').innerHTML = `
       <section class="profile-card">
+
         <p class="eyebrow">
-          <span></span> YOUR CAMPUSFOUND PROFILE
+          <span></span>
+          YOUR CAMPUSFOUND PROFILE
         </p>
 
-        <span class="large-avatar">◉</span>
+        <span class="large-avatar">
+          ◉
+        </span>
 
         <h1>
           Welcome to<br>
@@ -22,14 +26,23 @@ function renderProfile() {
         </p>
 
         <div class="profile-actions">
-          <button class="btn btn-dark" id="quickSignIn">
+
+          <button
+            class="btn btn-dark"
+            id="quickSignIn"
+          >
             Sign in <b>→</b>
           </button>
 
-          <a class="btn btn-light" href="admin.html">
+          <a
+            class="btn btn-light"
+            href="admin.html"
+          >
             Admin sign in
           </a>
+
         </div>
+
       </section>
     `;
 
@@ -46,11 +59,8 @@ function renderProfile() {
 
   const alerts = mine
     .filter(i => i.status !== 'Open')
-    .map(i => `${i.name}: ${i.status}`)
-    .concat(
-      items
-        .filter(i => i.claim === 'pending')
-        .map(i => `A claim is pending for ${i.name}`)
+    .map(
+      i => `${i.name}: ${i.status}`
     );
 
   $('#profilePage').innerHTML = `
@@ -58,11 +68,19 @@ function renderProfile() {
 
       <p class="eyebrow">
         <span></span>
-        ${u.role === 'admin' ? 'ADMINISTRATOR' : 'STUDENT'} ACCOUNT
+        ${
+          u.role === 'admin'
+            ? 'ADMINISTRATOR'
+            : 'STUDENT'
+        } ACCOUNT
       </p>
 
       <span class="large-avatar">
-        ${u.name ? u.name[0].toUpperCase() : 'U'}
+        ${
+          u.name
+            ? u.name[0].toUpperCase()
+            : 'U'
+        }
       </span>
 
       <h1>
@@ -78,18 +96,27 @@ function renderProfile() {
         ${
           u.role === 'admin'
             ? `
-              <a class="btn btn-dark" href="admin.html">
+              <a
+                class="btn btn-dark"
+                href="admin.html"
+              >
                 Admin dashboard <b>→</b>
               </a>
             `
             : `
-              <a class="btn btn-dark" href="lost.html">
+              <a
+                class="btn btn-dark"
+                href="lost.html"
+              >
                 Report an item <b>→</b>
               </a>
             `
         }
 
-        <button class="btn btn-light" id="signOut">
+        <button
+          class="btn btn-light"
+          id="signOut"
+        >
           Sign out
         </button>
 
@@ -100,22 +127,32 @@ function renderProfile() {
     <section class="notification-centre">
 
       <p class="eyebrow">
-        <span></span> NOTIFICATION CENTRE
+        <span></span>
+        NOTIFICATION CENTRE
       </p>
 
-      <h2>Recent updates</h2>
+      <h2>
+        Recent updates
+      </h2>
+
+      <div id="profileNoticeList"></div>
 
       ${
         alerts.length
           ? alerts
-              .map(a => `
-                <p class="alert-row">
-                  ✦ ${a}
-                </p>
-              `)
+              .map(
+                a => `
+                  <p class="alert-row">
+                    ✦ ${a}
+                  </p>
+                `
+              )
               .join('')
           : `
-            <p class="alert-row">
+            <p
+              class="alert-row"
+              id="emptyNotificationMessage"
+            >
               ✓ You’re all caught up. New matches and claim updates will appear here.
             </p>
           `
@@ -126,13 +163,16 @@ function renderProfile() {
     <section class="my-reports">
 
       <div>
+
         <p class="eyebrow">
-          <span></span> MY REPORTS
+          <span></span>
+          MY REPORTS
         </p>
 
         <h2>
           Your lost & found activity
         </h2>
+
       </div>
 
       <div class="my-report-grid">
@@ -154,21 +194,41 @@ function renderProfile() {
 
   bindCards();
 
-  const signOut = $('#signOut');
+  const signOut =
+    $('#signOut');
 
   if (signOut) {
     signOut.onclick = () => {
-      localStorage.removeItem('campusfound-user');
+      localStorage.removeItem(
+        'campusfound-user'
+      );
 
       renderProfile();
 
-      if (typeof updateProfile === 'function') {
+      if (
+        typeof updateProfile ===
+        'function'
+      ) {
         updateProfile();
       }
     };
   }
 
-  setTimeout(profileNotices, 0);
+  profileNotices();
+}
+
+function getProfileNotices() {
+  try {
+    return (
+      JSON.parse(
+        localStorage.getItem(
+          'campusfound-notices'
+        )
+      ) || []
+    );
+  } catch {
+    return [];
+  }
 }
 
 function profileNotices() {
@@ -179,32 +239,139 @@ function profileNotices() {
     return;
   }
 
-  if (typeof notices !== 'function') {
-    return;
-  }
+  const currentUser = user();
 
-  const u = user();
-
-  const mine = notices().filter(
-    n => n.email === u.email
-  );
+  const mine =
+    getProfileNotices()
+      .filter(
+        n =>
+          n.email ===
+          currentUser.email
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt) -
+          new Date(a.createdAt)
+      );
 
   if (!mine.length) return;
 
-  const target = $('.notification-centre');
+  const target =
+    $('#profileNoticeList');
 
   if (!target) return;
 
-  target.insertAdjacentHTML(
-    'afterbegin',
-    mine
-      .map(n => `
-        <p class="alert-row accepted-alert">
-          ✓ ${n.message}
+  const emptyMessage =
+    $('#emptyNotificationMessage');
+
+  if (emptyMessage) {
+    emptyMessage.remove();
+  }
+
+  target.innerHTML = mine
+    .map(n => {
+      if (n.type === 'claim-approved') {
+        return `
+          <div class="claim-approved-notice">
+
+            <div class="notice-icon">
+              ✓
+            </div>
+
+            <div class="notice-content">
+
+              <span class="notice-label">
+                CLAIM UPDATE
+              </span>
+
+              <h3>
+                ${n.title || 'Claim approved'}
+              </h3>
+
+              <p>
+                ${n.message}
+              </p>
+
+              <div class="collection-location">
+
+                <span>
+                  COLLECTION LOCATION
+                </span>
+
+                <b>
+                  Security Office behind Turing Block
+                </b>
+
+              </div>
+
+              <div class="collection-note">
+
+                <b>
+                  Important reminder
+                </b>
+
+                <span>
+                  ${
+                    n.note ||
+                    'Please carry your valid Student ID while collecting the item.'
+                  }
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+        `;
+      }
+
+      if (n.type === 'claim-rejected') {
+        return `
+          <div class="claim-rejected-notice">
+
+            <div class="notice-icon rejected-icon">
+              ×
+            </div>
+
+            <div class="notice-content">
+
+              <span class="notice-label">
+                CLAIM UPDATE
+              </span>
+
+              <h3>
+                ${n.title || 'Claim rejected'}
+              </h3>
+
+              <p>
+                ${n.message}
+              </p>
+
+              <div class="collection-note">
+
+                <b>
+                  Note
+                </b>
+
+                <span>
+                  ${n.note || ''}
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+        `;
+      }
+
+      return `
+        <p class="alert-row">
+          ✦ ${n.message || ''}
         </p>
-      `)
-      .join('')
-  );
+      `;
+    })
+    .join('');
 }
 
 renderProfile();
