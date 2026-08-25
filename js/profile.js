@@ -7,7 +7,7 @@ function renderProfile() {
         $('#profilePage').innerHTML = `
             <section class="profile-card">
                 <p class="eyebrow">
-                    <span></span> YOUR CAMPUSFOUND PROFILE
+                    <span></span> YOUR LOSTLINK PROFILE
                 </p>
 
                 <span class="large-avatar">◉</span>
@@ -15,7 +15,7 @@ function renderProfile() {
                 <h1>
                     Welcome to
                     <br>
-                    CampusFound.
+                    LOSTLINK.
                 </h1>
 
                 <p>
@@ -43,7 +43,7 @@ function renderProfile() {
                                 <span></span> STUDENT SIGN IN
                             </p>
 
-                            <h2>Welcome back.</h2>
+                            <h2>Welcome.</h2>
                         </div>
                     </div>
 
@@ -207,7 +207,7 @@ function renderProfile() {
     bindCards();
 
     $('#signOut').onclick = () => {
-        localStorage.removeItem('campusfound-user');
+        localStorage.removeItem('LOSTLINK-user');
 
         renderProfile();
 
@@ -384,7 +384,7 @@ function bindLoginForm() {
         };
 
         localStorage.setItem(
-            'campusfound-user',
+            'LOSTLINK-user',
             JSON.stringify(currentUser)
         );
 
