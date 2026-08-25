@@ -9,7 +9,7 @@ function renderProfile() {
 
         <p class="eyebrow">
           <span></span>
-          YOUR CAMPUSFOUND PROFILE
+          YOUR LOSTLINK PROFILE
         </p>
 
         <span class="large-avatar">
@@ -18,7 +18,7 @@ function renderProfile() {
 
         <h1>
           Welcome to<br>
-          CampusFound.
+          LostLink.
         </h1>
 
         <p>
@@ -78,7 +78,7 @@ function renderProfile() {
       </span>
 
       <h1>
-        ${u.name || 'CampusFound User'}
+        ${u.name || 'LostLink User'}
       </h1>
 
       <p>
@@ -179,7 +179,7 @@ function renderProfile() {
   if (signOut) {
     signOut.onclick = () => {
       localStorage.removeItem(
-        'campusfound-user'
+        'LostLink-user'
       );
 
       renderProfile();
@@ -200,7 +200,7 @@ function getProfileNotices() {
     return (
       JSON.parse(
         localStorage.getItem(
-          'campusfound-notices'
+          'LostLink-notices'
         )
       ) || []
     );
