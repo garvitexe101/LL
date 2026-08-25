@@ -214,7 +214,7 @@ form.addEventListener(
     };
 
     localStorage.setItem(
-      'campusfound-user',
+      'LostLink-user',
       JSON.stringify(currentUser)
     );
 
