@@ -189,45 +189,43 @@ passwordInput.addEventListener(
 
 form.addEventListener(
   'submit',
-  e => {
+  async e => {
     e.preventDefault();
 
-    const validName =
-      validateName();
+    const validEmail = validateEmail();
+    const validPassword = validatePassword();
 
-    const validEmail =
-      validateEmail();
-
-    const validPassword =
-      validatePassword();
-
-    if (
-      !validName ||
-      !validEmail ||
-      !validPassword
-    ) {
+    if (!validEmail || !validPassword) {
       return;
     }
 
-    const currentUser = {
-      id: Date.now(),
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
 
-      name:
-        nameInput.value.trim(),
+    try {
+      try {
+        await api('/auth/login', { method: 'POST', body: { email, password } });
+      } catch (err) {
+        if (err.code !== 'no_account') throw err;
 
-      email:
-        emailInput.value
-          .trim()
-          .toLowerCase(),
+        // First visit: create the account (full name is needed only now).
+        if (!validateName()) {
+          toast('No account found for this email. Enter your full name to create one.');
+          button.disabled = false;
+          return;
+        }
+        await api('/auth/register', {
+          method: 'POST',
+          body: { name: nameInput.value.trim(), email, password }
+        });
+      }
 
-      role: 'student'
-    };
-
-    localStorage.setItem(
-      'campusfound-user',
-      JSON.stringify(currentUser)
-    );
-
-    location.href = 'profile.html';
+      location.href = safeNext() || 'profile.html';
+    } catch (err) {
+      toast(err.message);
+      button.disabled = false;
+    }
   }
 );
