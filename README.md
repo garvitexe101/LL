@@ -7,6 +7,8 @@ Evaluation 2 version: the original HTML/CSS/JS frontend now talks to a **Node.js
 
 ## Run it locally
 
+Full walkthrough with troubleshooting: [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md).
+
 Requires Node.js 18 or newer.
 
 ```bash
