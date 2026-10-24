@@ -1,118 +1,77 @@
 # LostLink
 
-> **Lost, found, back to you.**  
-> A campus lost-and-found web application for Chitkara University, Rajpura Campus.
+> **Lost, found, back to you.**
+> A campus lost-and-found web app for Chitkara University, Rajpura Campus.
 
-LostLink helps students report lost or found belongings, browse active reports, verify ownership before making a claim, and lets an administrator review those claims. It is built as a standalone front-end prototype using **HTML, CSS, and JavaScript**.
+Evaluation 2 version: the original HTML/CSS/JS frontend now talks to a **Node.js + Express** API backed by **SQLite**.
 
-## Open the project
+## Run it locally
 
-Open [index.html](index.html) in a browser. For the smoothest experience in VS Code, install the **Live Server** extension, right-click `index.html`, and select **Open with Live Server**.
+Requires Node.js 18 or newer.
 
-No npm install, database, or server setup is required for this Phase 1 version.
-
-## Explore the experience
-
-| What you want to do | Where to go | What happens |
-| --- | --- | --- |
-| Report a missing belonging | [lost.html](lost.html) | Submit a lost-item report with category, colour, location, date, time, photo preview, and private ownership detail. |
-| Help return an item | [found.html](found.html) | Add a found-item report and safe deposit location. |
-| Search reported items | [browse.html](browse.html) | Filter by category and report type, or search by item, colour, and location. |
-| View locations | [map.html](map.html) | Select a campus location to show relevant active reports. |
-| Claim a found item | Any item card | Answer specific ownership questions before the claim is sent to an administrator. |
-| View your activity | [profile.html](profile.html) | See your reports, possible matches, and claim notifications. |
-| Moderate the platform | [admin.html](admin.html) | Review claims, accept/reject rightful owners, and remove inappropriate listings. |
-
-## Quick demo flow
-
-1. Open `index.html` and select **I lost something** or **I found something**.
-2. Sign in with any university-style email address, for example `student@chitkara.edu`.
-3. Submit a report. It is stored in your current browser using `localStorage`.
-4. Open **Browse** or **Campus map** to find the report.
-5. Open a found-item card and complete all four ownership questions to submit a claim.
-6. Go to the admin dashboard and sign in using the demo credentials below.
-7. Open a listed item, check the student answers, then accept or reject the claim.
-
-  
-## Live Demo
-link - https://lostlink-topaz.vercel.app/index.html
-
-
-
-## Key Phase 1 features
-
-- Student and administrator sign-in flows
-- Separate pages for reporting lost and found items
-- Required form validation and modern campus location dropdowns
-- Manual time field with AM/PM selection
-- Local image-upload preview for reports
-- Browser-based report storage with `localStorage`
-- Smart possible-match indicator using item category and campus location
-- Dedicated browse directory with category and type filters
-- Interactive illustrated Rajpura-campus location map
-- Item detail page with secure ownership-verification questions
-- Student profile with **My Reports** and notification centre
-- Admin dashboard with claim review, accept/reject actions, and item removal
-- Recently returned section and campus safety reminder
-- Responsive layout for desktop and mobile screens
-
-## Ownership validation
-
-LostLink does not expose private ownership details publicly. To claim a found item, the claimant must correctly provide:
-
-1. The item colour
-2. The reported location
-3. One private item feature
-4. A word from the public description
-
-Only valid answers create a pending claim. The administrator can then approve the correct claimant, mark the item as returned, and send an in-app collection notification.
-
-## Project structure
-
-```text
-campusfound-phase1/
-├── index.html            # Home page
-├── browse.html           # Item directory and filters
-├── lost.html             # Lost-item report form
-├── found.html            # Found-item report form
-├── map.html              # Interactive illustrated campus map
-├── how-it-works.html     # Process, trust information, and contact form
-├── profile.html          # Student profile and notifications
-├── admin.html            # Administrator dashboard
-├── item.html             # Item details, claims, and admin item review
-├── style.css             # Complete responsive styling
-├── script.js             # Application functionality and local storage logic
-└── lostlink-logo-v4.svg  # Final LostLink browser icon
+```bash
+npm install
+cp .env.example .env     # optional - defaults work out of the box
+npm start
 ```
 
-## Technology used
+Open <http://localhost:3000>.
 
-| Technology | Purpose |
-| --- | --- |
-| HTML5 | Page structure and accessible forms |
-| CSS3 | Responsive layout, animations, interactive states, and visual design |
-| Vanilla JavaScript | Form handling, matching, filtering, auth prototype, claims, and `localStorage` |
-| Google Fonts | DM Sans and Playfair Display typography |
-| Browser `localStorage` | Prototype data persistence without a backend |
+On first start the app creates `data/lostlink.db`, an admin account, and a few demo reports.
 
-## Important Phase 1 limitations
+| Account | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@chitkara.edu` | `admin123` (change via `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`) |
+| Student | any `@chitkara.edu` or `@chitkara.edu.in` email | the sign-in page creates the account on first use |
 
-This is intentionally a front-end prototype. Data is saved only in the browser that created it. Clearing browser data clears reports, notifications, and sign-in state.
+To try the full workflow with two people, use two browsers (or one normal and one private window):
+student A reports a **found** item, student B reports a **lost** item at the same location, then B claims it and the admin approves it.
 
-Before using the project publicly, Phase 2 should add:
+## What was added
 
-- Secure backend authentication (for example Google OAuth or university SSO)
-- Database storage for reports, images, users, and claims
-- Real administrator roles and permission checks
-- Secure cloud image uploads
-- Email or push notifications
-- Server-side matching and moderation logs
-- A real campus map API with live item markers
+- **Express API** (`server/`): auth, items, claims, matches, notifications, map and admin routes.
+- **SQLite** (`better-sqlite3`): users, items, claims, matches and notifications, all accessed with parameterised queries.
+- **Authentication**: bcrypt-hashed passwords, JWT in an httpOnly cookie, and role checks on the server for every admin route.
+- **Validation** of every submitted field on the server.
+- **Rule-based matching** (no AI) in `server/matching.js`. A lost and a found report are scored out of 100:
+  category 25, campus zone 25, colour 15, date proximity 15, description keywords 20.
+  Scores of 50+ are stored as possible matches; 70+ also notify both owners. Thresholds and weights are easy to tune.
+- **Email notifications** (Nodemailer) for strong matches, claim approvals and rejections. Without SMTP settings, emails are printed to the server console.
+- **Live map**: Leaflet + OpenStreetMap, with zone-level markers (never exact positions). Zone coordinates are approximate and live in `server/config.js`.
+- **Privacy**: private ownership details are never returned by public endpoints; only the report owner and admins can see them.
 
-## Safety note
+## Workflow
 
-Arrange handovers only in visible, busy campus locations such as the Security Office or Student Centre. Never share personal contact information or meet in isolated areas through the prototype.
+Sign in → submit lost/found report → Express validates and saves it in SQLite → matching service compares it with opposite reports → matches are shown (and emailed if strong) → a user submits a claim on a found item → an admin reviews it → the database is updated and the claimant is emailed.
 
----
+## Configuration (`.env`)
 
-Built for the **LostLink Phase 1** university evaluation project.
+See `.env.example`. Secrets stay in `.env`, which is git-ignored. Set `JWT_SECRET` to keep users signed in across restarts, and the `SMTP_*` values to send real email.
+
+## Project layout
+
+```
+public/            frontend (HTML, CSS, JS) served by Express
+server/
+  index.js         app setup and routing
+  config.js        env + campus zones, categories, colours
+  db.js            SQLite schema
+  matching.js      rule-based matching
+  mailer.js        Nodemailer wrapper
+  notify.js        in-app notification + email
+  routes/          auth, items, claims (+ admin), misc (meta, map, notifications, matches)
+data/              SQLite file (created at runtime, git-ignored)
+```
+
+## API summary
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| POST | `/api/auth/register`, `/login`, `/logout` · GET `/me` | cookie session |
+| GET | `/api/items` | public active reports (`type`, `category`, `zone`, `q`) |
+| POST | `/api/items` | sign-in required; returns the saved report and its matches |
+| GET | `/api/items/:id`, `/:id/image`, `/:id/matches` | matches: owner or admin only |
+| GET | `/api/items/mine`, `/api/items/returned` | |
+| POST | `/api/items/:id/claims` | sign-in required |
+| GET | `/api/notifications`, `/api/matches/mine`, `/api/map`, `/api/meta` | |
+| GET/POST/DELETE | `/api/admin/overview`, `/claims`, `/claims/:id/decision`, `/items`, `/items/:id` | admin only |
